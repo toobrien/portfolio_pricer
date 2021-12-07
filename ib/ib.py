@@ -2,8 +2,8 @@ from asyncio import new_event_loop, wait
 from ibapi.client import EClient
 from ibapi.contract import Contract
 from ibapi.wrapper import EWrapper
-from option_chain import option_chain
-from underlying import underlying
+from ib.option_chain import option_chain
+from ib.underlying import underlying
 from threading import get_ident, Thread
 
 
@@ -21,6 +21,7 @@ DEFAULT_DATA_TYPE = 4
 MAX_DATA_LINES = 50
 
 NOT_FOUND = 0
+
 
 class wrapper(EWrapper):
 
@@ -246,7 +247,8 @@ class ib(wrapper, EClient):
         type,
         currency = "USD",
         exchange = "SMART",
-        expiration = None
+        expiration = None,
+        localSymbol = None
     ):
 
         self.reqId += 1
@@ -257,6 +259,7 @@ class ib(wrapper, EClient):
         con.secType = type
         con.currency = currency
         con.exchange = exchange
+        con.localSymbol = localSymbol
         
         if expiration != None:
             
@@ -356,14 +359,16 @@ class ib(wrapper, EClient):
         symbol,
         exchange = "SMART",
         security_type = "STK",
-        max_contracts = 1
+        max_contracts = 1,
+        local_symbol = ""
     ):
 
         details = self.loop.run_until_complete(
                 self.contract_details(
                 symbol = symbol, 
                 type = security_type, 
-                exchange = exchange
+                exchange = exchange,
+                localSymbol = local_symbol
             )
         )
 

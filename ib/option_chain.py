@@ -1,7 +1,7 @@
 from asyncio import wait, sleep
 from bisect import bisect_left
 from ibapi.contract import Contract
-from option import option
+from ib.option import option
 from time import time
 
 
