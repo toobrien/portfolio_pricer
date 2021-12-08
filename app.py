@@ -1,34 +1,35 @@
 from dash import Dash
-from dash_html_components import P
+from dash_html_components import Table, Td, Tr
 from dash.dependencies import Input, Output, State
 from ib.ib import ib
 from json import loads
 from parsers import parse_ul_def
+from typing import List
 from view import view
 
 
 # GLOBALS
 
 
-app = Dash(__name__)
+app = Dash(__name__, title = "payoff_2")
 app.layout = view().get_layout()
-MAX_EXPIRIES = 5
+MAX_EXPIRIES = 6
 
 
 # FUNCTIONS
 
-'''
 @app.callback(
-    Output("underlyings_data", "value"),
+    Output("underlyings_data", "children"),
     Input("underlyings_control_submit", "n_clicks"),
-    State("underlyings_control_text", "value")
+    State("underlyings_control_text", "value"),
+    prevent_initial_call = True
 )
-'''
-def set_underlyings_data(_, txt: str) -> P:
+def set_underlyings_data(_, txt: str) -> List[Table]:
 
     ul_defs = txt.split("\n")
     uls = []
-    res = []
+    rows = []
+    i = 0
 
     # get underlyings
 
@@ -55,13 +56,18 @@ def set_underlyings_data(_, txt: str) -> P:
         strikes = []
         trading_classes = []
 
-        for option_chain in option_chains:
+        for j in range(len(option_chains)):
 
-            trading_classes.append(option_chain.get_trading_class())
+            trading_classes.append(f"{j}:{option_chains[j].get_trading_class()}")
 
-        # assume expiries valid for all classes
+        # assume expiries valid for all classes, format and label expiries
 
         expiries.extend(option_chains[0].get_expiries()[:MAX_EXPIRIES])
+
+        for j in range(len(expiries)):
+
+            exp = expiries[j]
+            expiries[j] = f"{j}:{str(exp)[4:6]}/{str(exp[6:8])}"    
 
         # take first, last, and middle strikes (or "-1" if ul price not available)
 
@@ -72,26 +78,56 @@ def set_underlyings_data(_, txt: str) -> P:
         
         strikes = [ str(strike) for strike in strikes ]
 
-        # format strings
-
-        symbol_string = f"{symbol:<6}"
-        price_string = f"{price:<6}"
-        expiries_string = f"[ {' '.join(expiries):<10} ]"
-        strikes_string = f"[ {strikes[0]:<6} ... {' '.join(strikes[1:3]):8} ... {strikes[3]:<6} ]"
-        trading_classes_string = f"[ {' '.join(trading_classes):<4} ]"
-
-        res.append(
-            symbol_string + 
-            price_string +
-            expiries_string +
-            strikes_string +
-            trading_classes_string
+        # append this underlying's row to data table
+        
+        label_cell = Td(
+            f"{i}:",
+            className = "ul_cell"
+        )
+        symbol_cell = Td(
+            f"{symbol}",
+            className = "ul_cell"
+        )
+        price_cell = Td(
+            f"{price}",
+            className = "ul_cell"
+        )
+        expiries_cell = Td(
+            f"{'  '.join(expiries)}",
+            className = "ul_cell"
+        )
+        strikes_cell = Td(
+            f"{strikes[0]} ... {', '.join(strikes[1:3])} ... {strikes[3]}",
+            className = "ul_cell"
+        )
+        trading_classes_cell = Td(
+            f"{'  '.join(trading_classes)}",
+            className = "ul_cell"
         )
 
-    return P(
-        id = "underlyings_data_text",
-        children = [ "\n".join(res) ]
+        rows.append(
+            Tr(
+                [
+                    label_cell,
+                    symbol_cell,
+                    price_cell,
+                    expiries_cell,
+                    strikes_cell,
+                    trading_classes_cell
+                ],
+                className = "ul_row"
+            )
+        )
+
+        i += 1
+
+    res = Table(
+        id = "underlyings_data_table",
+        children = rows,
+        className = "ul_table"
     )
+
+    return [ res ]
 
 
 # MAIN
@@ -112,6 +148,7 @@ if __name__ == "__main__":
         ib_client.set_mkt_data_type(4)
 
         # TEST
+        '''
         set_underlyings_data(
             None,
             "\n".join(
@@ -121,6 +158,7 @@ if __name__ == "__main__":
                 ]
             )
         )
+        '''
 
         app.run_server(
             host = config["dash_host"],

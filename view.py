@@ -1,5 +1,5 @@
 from dash_core_components import Slider, Textarea
-from dash_html_components import Button, Div, Table, Td, Tr
+from dash_html_components import Br, Button, Div, Table, Td, Tr
 
 class view():
 
@@ -19,6 +19,7 @@ class view():
                     rows = ROWS,
                     cols = COLS
                 ),
+                Br(),
                 Button(
                     id = "underlyings_control_submit",
                     children = "submit"
@@ -34,6 +35,7 @@ class view():
                     rows = ROWS,
                     cols = COLS
                 ),
+                Br(),
                 Button(
                     id = "legs_submit",
                     children = "submit"
@@ -49,6 +51,7 @@ class view():
                     rows = ROWS,
                     cols = COLS
                 ),
+                Br(),
                 Button(
                     id = "variables_submit",
                     children = "submit"
@@ -69,6 +72,7 @@ class view():
 
         underlyings_data_cell = Td(
             id = "underlyings_data_cell",
+            colSpan = 3,
             children = [
                 Div(
                     id = "underlyings_data",
@@ -85,7 +89,9 @@ class view():
         # payoffs
 
         payoff_cell = Td(
-            id = "chart_cell"
+            id = "chart_cell",
+            colSpan = 3,
+            children = []
         )
 
         payoff_row = Tr(
