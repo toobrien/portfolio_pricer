@@ -3,7 +3,7 @@ from dash_html_components import Table, Td, Tr
 from dash.dependencies import Input, Output, State
 from ib.ib import ib
 from json import loads
-from parsers import parse_ul_def
+from parsers import parse_ul_def, parse_legs
 from typing import List
 from view import view
 
@@ -129,6 +129,22 @@ def set_underlyings_data(_, txt: str) -> List[Table]:
 
     return [ res ]
 
+
+@app.callback(
+    Output("NULL", "children"),
+    Input("legs_submit", "n_clicks"),
+    State("legs_text", "value"),
+    prevent_initial_call = True
+)
+def set_legs(_, legs_text: str) -> None:
+
+    res = parse_legs(legs_text)
+
+    for leg_def in res: 
+        
+        print(leg_def)
+
+    # TODO: sort legs by expiry
 
 # MAIN
 

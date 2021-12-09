@@ -104,7 +104,11 @@ class view():
             children = [
                 payoff_row,
                 underlyings_data_row,
-                controls_row 
+                controls_row ,
+                Div(
+                    id = "NULL",
+                    children = []
+                )
             ]
         )
 

@@ -88,3 +88,58 @@ def parse_ul_def(ul_def: str, config: dict) -> dict:
                 args["exchange"] = config["exchanges"]["FUT"][args["symbol"]]
     
     return args
+
+
+'''
+there are two formats:
+
+<underlying>:<expiry index>:<trading_class_index>:[+-]<qty> [PC]<strike>
+
+because <underlying> can be either an index or a localSymbol. the client
+should test underlying with isnumeric() to determine the format.
+'''
+def parse_legs(legs_text: str) -> dict:
+
+    res = []
+
+    for leg_def in legs_text.split("\n"):
+
+        parts = leg_def.split()
+        idxs = parts[0].split(":")
+        pc_strike = parts[1]
+
+        leg = {
+            "underlying": None,
+            "expiry": int(idxs[1]),
+            "trading_class": idxs[2],
+            "long": idxs[3][0] != "-",
+            "quantity": None,
+            "call": pc_strike[0] == "C",
+            "strike": float(pc_strike[1:])
+        }
+
+        # underlying can be index or localSymbol
+
+        if idxs[0].isnumeric(): 
+            
+            leg["underlying"] = int(idxs[0])
+
+        else:
+            
+            leg["underlying"] = idxs[0]
+
+        # plus/minus prefix on qty is optional (assumed + if absent)
+
+        leg["quantity"] = int(idxs[3]) 
+        
+        if idxs[3][0] not in [ "+", "-" ]:
+
+            leg["quantity"] = int(idxs[3])
+
+        else:
+            
+            leg["quantity"] = int(idxs[3][1:])
+
+        res.append(leg)
+
+    return res
