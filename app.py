@@ -3,6 +3,7 @@ from dash_html_components import Table, Td, Tr
 from dash.dependencies import Input, Output, State
 from ib.ib import ib
 from json import loads
+from model import model
 from parsers import parse_ul_def, parse_legs
 from typing import List
 from view import view
@@ -17,6 +18,7 @@ MAX_EXPIRIES = 6
 
 
 # FUNCTIONS
+
 
 @app.callback(
     Output("underlyings_data", "children"),
@@ -127,6 +129,8 @@ def set_underlyings_data(_, txt: str) -> List[Table]:
         className = "ul_table"
     )
 
+    model_.set_underlyings(res)
+
     return [ res ]
 
 
@@ -146,6 +150,8 @@ def set_legs(_, legs_text: str) -> None:
 
     # TODO: sort legs by expiry
 
+    model_.set_legs(res)
+
 # MAIN
 
 
@@ -162,6 +168,8 @@ if __name__ == "__main__":
         )
 
         ib_client.set_mkt_data_type(4)
+
+        model_ = model()
 
         # TEST
         '''
