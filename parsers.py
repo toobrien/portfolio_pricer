@@ -1,4 +1,4 @@
-
+from model import leg
 
 '''
 there are three formats:
@@ -108,38 +108,38 @@ def parse_legs(legs_text: str) -> dict:
         idxs = parts[0].split(":")
         pc_strike = parts[1]
 
-        leg = {
-            "underlying": None,
-            "expiry": int(idxs[1]),
-            "trading_class": idxs[2],
-            "long": idxs[3][0] != "-",
-            "quantity": None,
-            "call": pc_strike[0] == "C",
-            "strike": float(pc_strike[1:])
-        }
+        leg_ = leg(
+            call = pc_strike[0] == "C",
+            expiry = int(idxs[1]),
+            long = idxs[3][0] != "-",
+            quantity = None,
+            strike = float(pc_strike[1:]),
+            trading_class = idxs[2],
+            underlying = None
+        )
 
         # underlying can be index or localSymbol
 
         if idxs[0].isnumeric(): 
             
-            leg["underlying"] = int(idxs[0])
+            leg_.underlying = int(idxs[0])
 
         else:
             
-            leg["underlying"] = idxs[0]
+            leg_.underlying = idxs[0]
 
         # plus/minus prefix on qty is optional (assumed + if absent)
 
-        leg["quantity"] = int(idxs[3]) 
+        leg_.quantity = int(idxs[3]) 
         
         if idxs[3][0] not in [ "+", "-" ]:
 
-            leg["quantity"] = int(idxs[3])
+            leg_.quantity = int(idxs[3])
 
         else:
             
-            leg["quantity"] = int(idxs[3][1:])
+            leg_.quantity= int(idxs[3][1:])
 
-        res.append(leg)
+        res.append(leg_)
 
     return res

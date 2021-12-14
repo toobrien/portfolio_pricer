@@ -129,7 +129,7 @@ def set_underlyings_data(_, txt: str) -> List[Table]:
         className = "ul_table"
     )
 
-    model_.set_underlyings(res)
+    model_.set_underlyings(uls)
 
     return [ res ]
 
