@@ -1,4 +1,5 @@
-from model import leg
+from model import model, leg
+from typing import List
 
 '''
 there are three formats:
@@ -143,3 +144,4 @@ def parse_legs(legs_text: str) -> dict:
         res.append(leg_)
 
     return res
+

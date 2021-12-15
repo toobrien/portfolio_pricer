@@ -135,22 +135,29 @@ def set_underlyings_data(_, txt: str) -> List[Table]:
 
 
 @app.callback(
-    Output("NULL", "children"),
+    Output("variables_text", "children"),
     Input("legs_submit", "n_clicks"),
     State("legs_text", "value"),
     prevent_initial_call = True
 )
 def set_legs(_, legs_text: str) -> None:
 
-    res = parse_legs(legs_text)
+    legs = parse_legs(legs_text)
+    model_.set_legs(legs)
+    model_.initialize_variables()
 
-    for leg_def in res: 
-        
-        print(leg_def)
+    return model_.get_variable_text()
 
-    # TODO: sort legs by expiry
 
-    model_.set_legs(res)
+@app.callback(
+    Output("chart_cell", "children"),
+    Input("variables_submit", "nclicks"),
+    State("variables_text", "value")
+)
+def set_variables_and_payoff_graph(_, variables_text):
+
+    return None
+
 
 # MAIN
 
