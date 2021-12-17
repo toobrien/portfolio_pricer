@@ -91,7 +91,12 @@ class view():
         payoff_cell = Td(
             id = "chart_cell",
             colSpan = 3,
-            children = []
+            children = [
+                Div(
+                    id = "payoff_chart_view",
+                    children = []
+                )
+            ]
         )
 
         payoff_row = Tr(

@@ -1,4 +1,5 @@
 from datetime import date
+from ib import ib
 from sys import maxsize
 from typing import List
 
@@ -77,6 +78,7 @@ class model():
 
         self.underlyings_by_index = None
         self.underlyings_by_symbol = None
+        self.legs_by_id = None
         self.legs_by_index = None
         self.legs_by_underlying = None
         self.variables = None
@@ -86,6 +88,7 @@ class model():
 
         legs = sorted(legs, key = lambda l: l.expiry)
 
+        self.legs_by_id = {}
         self.legs_by_index = legs
         self.legs_by_underlying = {
             symbol : []
@@ -112,6 +115,7 @@ class model():
             # set id
 
             leg.id = f"{leg.underlying}:{'+' if leg.long else '-'}{'C' if leg.call else 'P'}{str(leg.strike)}"
+            self.legs_by_id[leg.id] = leg
 
             # set expiry (replace index (int) with string (date))
 
@@ -136,6 +140,7 @@ class model():
 
                     break
 
+
     def set_underlyings(self, underlyings: List[ib.underlying]):
 
         self.underlyings_by_index = []
@@ -154,11 +159,6 @@ class model():
             
             self.underlyings_by_index.append(ul_)
             self.underlyings_by_symbol[symbol] = ul_
-
-    
-    def get_leg(self, index: int):
-
-        return self.legs[index]
 
     
     def get_underlying_by_symbol(self, symbol: str):
@@ -191,7 +191,7 @@ class model():
                 self.variables["time"] = leg.dte
     
 
-    def get_variable_text(self):
+    def get_variables_text(self):
 
         res = []
 
@@ -204,3 +204,29 @@ class model():
             res.append(f"{leg.id}:\t{leg.iv}")
 
         return res.join("\n")
+
+    
+    def set_variables_from_text(self, variables_text):
+
+        self.variables = {
+            "time": maxsize,
+            "rate": 0.10
+        }
+
+        for variable_def in variables_text.split("\n"):
+
+            parts = variable_def.split()
+
+            if parts[0][0] in [ "+", "-" ]:
+
+                # [ leg_id, iv ]
+                self.legs_by_id[parts[0]].iv = float(parts[1])
+
+            elif parts[0] in self.underlyings_by_id:
+
+                # [ underlying_id, price ]
+                self.underlyings_by_id[parts[0]].price = float(parts[1])
+
+
+    def get_legs_by_id(self):   return self.legs_by_id
+    def get_variables(self):    return self.variables

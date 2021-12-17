@@ -109,9 +109,15 @@ def parse_legs(legs_text: str) -> dict:
         idxs = parts[0].split(":")
         pc_strike = parts[1]
 
+        # cost, dte, iv, and id set in model.set_legs
+
         leg_ = leg(
             call = pc_strike[0] == "C",
+            cost = None,
+            dte = None,
             expiry = int(idxs[1]),
+            id = None,
+            iv = None,
             long = idxs[3][0] != "-",
             quantity = None,
             strike = float(pc_strike[1:]),

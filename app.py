@@ -5,26 +5,39 @@ from ib.ib import ib
 from json import loads
 from model import model
 from parsers import parse_ul_def, parse_legs
+from payoff import get_payoff_graph
 from typing import List
 from view import view
 
 
 # GLOBALS
 
-
 app = Dash(__name__, title = "payoff_2")
 app.layout = view().get_layout()
+
 MAX_EXPIRIES = 6
+DEBUG = True
 
 
 # FUNCTIONS
 
+def debug(dash_decorator):
 
-@app.callback(
-    Output("underlyings_data", "children"),
-    Input("underlyings_control_submit", "n_clicks"),
-    State("underlyings_control_text", "value"),
-    prevent_initial_call = True
+    def decorator(func):
+
+        if DEBUG: return func
+        else:     return dash_decorator(func)
+
+    return decorator
+
+
+@debug(
+    app.callback(
+        Output("underlyings_data", "children"),
+        Input("underlyings_control_submit", "n_clicks"),
+        State("underlyings_control_text", "value"),
+        prevent_initial_call = True
+    )
 )
 def set_underlyings_data(_, txt: str) -> List[Table]:
 
@@ -134,11 +147,14 @@ def set_underlyings_data(_, txt: str) -> List[Table]:
     return [ res ]
 
 
-@app.callback(
-    Output("variables_text", "children"),
-    Input("legs_submit", "n_clicks"),
-    State("legs_text", "value"),
-    prevent_initial_call = True
+
+@debug(
+    app.callback(
+        Output("variables_text", "children"),
+        Input("legs_submit", "n_clicks"),
+        State("legs_text", "value"),
+        prevent_initial_call = True
+    )
 )
 def set_legs(_, legs_text: str) -> None:
 
@@ -146,21 +162,32 @@ def set_legs(_, legs_text: str) -> None:
     model_.set_legs(legs)
     model_.initialize_variables()
 
-    return model_.get_variable_text()
+    return model_.get_variables_text()
 
 
-@app.callback(
-    Output("chart_cell", "children"),
-    Input("variables_submit", "nclicks"),
-    State("variables_text", "value")
+
+@debug(
+    app.callback(
+        Output("chart_cell", "children"),
+        Input("variables_submit", "nclicks"),
+        State("variables_text", "value")
+    )
 )
 def set_variables_and_payoff_graph(_, variables_text):
 
-    return None
+    model_.set_variables_from_text(variables_text)
+
+    legs = model_.get_legs_by_id()
+    variables = model_.get_variables()
+
+    return get_payoff_graph(
+        "payoff_chart_view",
+        legs,
+        variables
+    )
 
 
 # MAIN
-
 
 if __name__ == "__main__":
 
@@ -179,21 +206,24 @@ if __name__ == "__main__":
         model_ = model()
 
         # TEST
-        '''
-        set_underlyings_data(
-            None,
-            "\n".join(
-                [
-                    "TSLA",
-                    "NG:5"
-                ]
-            )
-        )
-        '''
+        
+        if DEBUG:
 
-        app.run_server(
-            host = config["dash_host"],
-            port = config["dash_port"], 
-            debug = False,
-            dev_tools_hot_reload = False
-        )
+            set_underlyings_data(
+                None,
+                "\n".join(
+                    [
+                        "TSLA",
+                        "NG:5"
+                    ]
+                )
+            )
+
+        if not DEBUG:
+
+            app.run_server(
+                host = config["dash_host"],
+                port = config["dash_port"], 
+                debug = False,
+                dev_tools_hot_reload = False
+            )

@@ -8,7 +8,8 @@
         "STK": "SMART",
         "FUT": {
             "NG": "NYMEX",
-            "CL": "NYMEX"
+            "CL": "NYMEX",
+            "HE": "CBOT"
         }
     }
 }
