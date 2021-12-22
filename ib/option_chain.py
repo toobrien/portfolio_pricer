@@ -119,7 +119,7 @@ class option_chain():
 
     def get_option(self, expiry, strike):
 
-        return self.get_options(self, [ expiry ], [ strike ])
+        return self.get_options([ expiry ], [ strike ])
 
 
     def get_contract_id(self):      return self.contract_id

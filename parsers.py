@@ -121,7 +121,7 @@ def parse_legs(legs_text: str) -> dict:
             long = idxs[3][0] != "-",
             quantity = None,
             strike = float(pc_strike[1:]),
-            trading_class = idxs[2],
+            trading_class = int(idxs[2]) if idxs[2].isnumeric() else idxs[2],
             underlying = None
         )
 

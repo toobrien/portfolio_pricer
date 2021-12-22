@@ -86,10 +86,7 @@ class model():
 
     def set_legs(self, legs: List[leg]):
 
-        legs = sorted(legs, key = lambda l: l.expiry)
-
         self.legs_by_id = {}
-        self.legs_by_index = legs
         self.legs_by_underlying = {
             symbol : []
             for symbol in self.underlyings_by_symbol
@@ -112,16 +109,32 @@ class model():
                     self.underlyings_by_symbol[leg.underlying].symbol
                 ].append(leg)
 
+            # replace underlying symbol with underlying object
+
+            leg.underlying = self.underlyings_by_symbol[leg.underlying]
+
             # set id
 
-            leg.id = f"{leg.underlying}:{'+' if leg.long else '-'}{'C' if leg.call else 'P'}{str(leg.strike)}"
+            leg.id = f"{leg.underlying.symbol}:{'+' if leg.long else '-'}{'C' if leg.call else 'P'}{str(leg.strike)}"
             self.legs_by_id[leg.id] = leg
 
             # set expiry (replace index (int) with string (date))
 
-            underlying_ = self.underlying_by_symbol[leg.underlying]
-            option_chain = underlying_.option_chains[leg.trading_class]
-            leg.expiry = option_chain.expiries[leg.expiry]
+            option_chain = None
+
+            if str(leg.trading_class).isnumeric():
+
+                option_chain = leg.underlying.option_chains_by_index[leg.trading_class]
+
+            else:
+
+                option_chain = leg.underlying.option_chains_by_symbol[leg.trading_class]
+
+            if leg.expiry < 10000000:
+
+                # expiry is an index, replace with date format: int(YYYYMMDD)
+            
+                leg.expiry = option_chain.expiries[leg.expiry]
             
             # set dte
 
@@ -133,12 +146,18 @@ class model():
             
             for option in option_chain.get_option(leg.expiry, leg.strike):
 
-                if option.right == leg_type:
+                if option.type == leg_type:
 
                     leg.cost = option.get_cost()
                     leg.iv = option.get_iv()
 
                     break
+        
+        # legs by index... is this needed?
+
+        self.legs_by_index = sorted(legs, key = lambda l: l.expiry)
+
+        pass
 
 
     def set_underlyings(self, underlyings: List[ib.underlying]):
