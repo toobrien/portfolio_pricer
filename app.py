@@ -219,7 +219,7 @@ if __name__ == "__main__":
                 )
             )
 
-            set_legs(
+            variables_text = set_legs(
                 None,
                 "\n".join(
                     [
@@ -228,6 +228,8 @@ if __name__ == "__main__":
                     ]
                 )
             )
+
+            set_variables_and_payoff_graph(None, variables_text)
 
         if not DEBUG:
 

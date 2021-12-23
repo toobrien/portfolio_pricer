@@ -157,8 +157,6 @@ class model():
 
         self.legs_by_index = sorted(legs, key = lambda l: l.expiry)
 
-        pass
-
 
     def set_underlyings(self, underlyings: List[ib.underlying]):
 
@@ -201,7 +199,7 @@ class model():
 
             self.variables[underlying.symbol] = underlying.price
 
-        for leg in self.legs:
+        for leg in self.legs_by_index:
 
             self.variables[leg.id] = leg.iv
             
@@ -216,13 +214,13 @@ class model():
 
         for underlying in self.underlyings_by_index:
 
-            res.append(f"{underlying.symbol}:\t\t{underlying.price}")
+            res.append(f"{underlying.symbol}\t\t{underlying.price}")
         
         for leg in self.legs_by_index:
 
-            res.append(f"{leg.id}:\t{leg.iv}")
+            res.append(f"{leg.id}\t{leg.iv}")
 
-        return res.join("\n")
+        return ("\n").join(res)
 
     
     def set_variables_from_text(self, variables_text):
@@ -235,16 +233,7 @@ class model():
         for variable_def in variables_text.split("\n"):
 
             parts = variable_def.split()
-
-            if parts[0][0] in [ "+", "-" ]:
-
-                # [ leg_id, iv ]
-                self.legs_by_id[parts[0]].iv = float(parts[1])
-
-            elif parts[0] in self.underlyings_by_id:
-
-                # [ underlying_id, price ]
-                self.underlyings_by_id[parts[0]].price = float(parts[1])
+            self.variables[parts[0]] = float(parts[1])
 
 
     def get_legs_by_id(self):   return self.legs_by_id
