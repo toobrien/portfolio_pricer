@@ -40,16 +40,16 @@ def price_leg(leg: leg, variables: dict):
 
             res = max(0, leg.strike - underlying_price)
 
-    return res * leg.qty
+    return res * leg.quantity
 
 
 def get_payoffs(legs: List[leg], variables: dict):
 
     front_leg = legs[0]
-    nearest_underlying = front_leg.underlying.symbol
+    nearest_underlying = front_leg.underlying
 
-    min_ = nearest_underlying * PAYOFF_MIN
-    max_ = nearest_underlying * PAYOFF_MAX
+    min_ = nearest_underlying.price * PAYOFF_MIN
+    max_ = nearest_underlying.price * PAYOFF_MAX
     inc = (max_ - min_) / STEPS
 
     x = arange(min_, max_, inc)
@@ -58,12 +58,9 @@ def get_payoffs(legs: List[leg], variables: dict):
     for x_ in x:
 
         y_ = 0
+        variables[front_leg.underlying.symbol] = x_
 
         for leg in legs:
-
-            if leg.underlying.symbol == front_leg.underlying.symbol:
-
-                variables[leg.underlying.symbol] = x_
 
             y_ = y_ + price_leg(leg, variables) #- leg.cost
         
@@ -76,7 +73,7 @@ def get_payoff_graph(
     id: str, 
     legs: List[leg], 
     variables: dict
-):
+) -> Graph:
 
     x, y = get_payoffs(legs, variables)
 
@@ -106,11 +103,7 @@ def get_payoff_graph(
             opacity = 0.2
         )
 
-    payoff_graph = [ 
-        Graph(
+    return Graph(
             id = id,
             figure = fig
-        ) 
-    ]
-
-    return payoff_graph
+        )

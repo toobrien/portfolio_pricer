@@ -152,8 +152,6 @@ class model():
                     leg.iv = option.get_iv()
 
                     break
-        
-        # legs by index... is this needed?
 
         self.legs_by_index = sorted(legs, key = lambda l: l.expiry)
 
@@ -197,6 +195,7 @@ class model():
         
         for underlying in self.underlyings_by_index:
 
+            print(f"{underlying.symbol}: {underlying.price}")
             self.variables[underlying.symbol] = underlying.price
 
         for leg in self.legs_by_index:
@@ -218,7 +217,7 @@ class model():
         
         for leg in self.legs_by_index:
 
-            res.append(f"{leg.id}\t{leg.iv}")
+            res.append(f"{leg.id}\t{leg.iv:4.4f}")
 
         return ("\n").join(res)
 
@@ -233,8 +232,10 @@ class model():
         for variable_def in variables_text.split("\n"):
 
             parts = variable_def.split()
+            print(f"PARTS: {parts}")
             self.variables[parts[0]] = float(parts[1])
 
 
-    def get_legs_by_id(self):   return self.legs_by_id
-    def get_variables(self):    return self.variables
+    def get_legs_by_id(self):       return self.legs_by_id
+    def get_legs_by_index(self):    return self.legs_by_index
+    def get_variables(self):        return self.variables

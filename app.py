@@ -1,4 +1,5 @@
 from dash import Dash
+from dash_core_components import Graph
 from dash_html_components import Table, Td, Tr
 from dash.dependencies import Input, Output, State
 from ib.ib import ib
@@ -16,7 +17,7 @@ app = Dash(__name__, title = "payoff_2")
 app.layout = view().get_layout()
 
 MAX_EXPIRIES = 6
-DEBUG = True
+DEBUG = False
 
 
 # FUNCTIONS
@@ -147,16 +148,15 @@ def set_underlyings_data(_, txt: str) -> List[Table]:
     return [ res ]
 
 
-
 @debug(
     app.callback(
-        Output("variables_text", "children"),
+        Output("variables_text", "value"),
         Input("legs_submit", "n_clicks"),
         State("legs_text", "value"),
         prevent_initial_call = True
     )
 )
-def set_legs(_, legs_text: str) -> None:
+def set_legs(_, legs_text: str) -> str:
 
     legs = parse_legs(legs_text)
     model_.set_legs(legs)
@@ -165,26 +165,31 @@ def set_legs(_, legs_text: str) -> None:
     return model_.get_variables_text()
 
 
-
 @debug(
     app.callback(
-        Output("chart_cell", "children"),
-        Input("variables_submit", "nclicks"),
-        State("variables_text", "value")
+        Output("payoff_chart_view", "children"),
+        Input("variables_submit", "n_clicks"),
+        State("variables_text", "value"),
+        prevent_initial_call = True
     )
 )
-def set_variables_and_payoff_graph(_, variables_text):
+def set_variables_and_payoff_graph(
+    _, 
+    variables_text: str
+) -> List[Graph]:
 
     model_.set_variables_from_text(variables_text)
 
-    legs = model_.get_legs_by_id()
+    legs = model_.get_legs_by_index()
     variables = model_.get_variables()
 
-    return get_payoff_graph(
-        "payoff_chart_view",
-        legs,
-        variables
-    )
+    return [ 
+        get_payoff_graph(
+            "payoff_chart_view",
+            legs,
+            variables
+        )
+    ]
 
 
 # MAIN
@@ -224,7 +229,7 @@ if __name__ == "__main__":
                 "\n".join(
                     [
                         "0:4:0:-1 C900",
-                        "0:4:0:-1 C890"
+                        "0:4:0:+1 C890"
                     ]
                 )
             )
