@@ -150,6 +150,8 @@ class model():
                 if option.type == leg_type:
 
                     leg.cost = option.get_cost()
+                    if leg.long: leg.cost *= -1
+
                     leg.iv = option.get_iv()
 
                     break
@@ -200,7 +202,7 @@ class model():
 
         for leg in self.legs_by_index:
 
-            self.variables[leg.id] = leg.iv
+            self.variables[leg.id] = { "iv": leg.iv, "cost": leg.cost }
             
             if leg.dte < self.variables["time"]:
 
@@ -217,7 +219,7 @@ class model():
         
         for leg in self.legs_by_index:
 
-            res.append(f"{leg.id}\t{leg.iv:4.4f}")
+            res.append(f"{leg.id}\t{leg.iv:4.4f},{leg.cost:4.4f}")
 
         return ("\n").join(res)
 
@@ -232,7 +234,20 @@ class model():
         for variable_def in variables_text.split("\n"):
 
             parts = variable_def.split()
-            self.variables[parts[0]] = float(parts[1])
+
+            if ":" in variable_def:
+                
+                # leg
+                vals = parts[1].split(',')
+                self.variables[parts[0]] = {
+                    "iv": float(vals[0]),
+                    "cost": float(vals[1])
+                }
+                
+            else:
+                
+                # underlying
+                self.variables[parts[0]] = float(parts[1])
 
 
     def get_legs_by_id(self):       return self.legs_by_id

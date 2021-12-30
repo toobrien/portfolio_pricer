@@ -8,15 +8,16 @@ from typing import List
 DPY = 252
 PAYOFF_MIN = 0.5
 PAYOFF_MAX = 1.5
-STEPS = 100
+STEPS = 1000
 
 def price_leg(leg: leg, variables: dict):
 
     time = (leg.dte - variables["time"]) / DPY
     underlying_price = variables[leg.underlying.symbol]
-    vol = variables[leg.id]    
+    vol = variables[leg.id]["iv"]    
     rate = variables["rate"]
-    
+    cost = variables[leg.id]["cost"]
+
     res = 0
 
     if time > 0:
@@ -40,7 +41,7 @@ def price_leg(leg: leg, variables: dict):
 
             res = max(0, leg.strike - underlying_price)
 
-    return res * leg.quantity * -1 if not leg.long else 1
+    return res * leg.quantity + cost
 
 
 def get_payoffs(legs: List[leg], variables: dict):

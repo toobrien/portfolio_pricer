@@ -7,7 +7,9 @@ class view():
     def __init__(self):
 
         ROWS = 10
-        COLS = 30
+        UL_COLS = 20
+        LEG_COLS = 20
+        VARS_COLS = 40
 
         # controls
 
@@ -17,14 +19,17 @@ class view():
                 Textarea(
                     id = "underlyings_control_text",
                     rows = ROWS,
-                    cols = COLS
+                    cols = UL_COLS
                 ),
                 Br(),
                 Button(
                     id = "underlyings_control_submit",
                     children = "submit"
                 )
-            ]
+            ],
+            style = {
+                "text-align": "left"
+            }
         )
 
         legs_control_cell = Td(
@@ -33,14 +38,17 @@ class view():
                 Textarea(
                     id = "legs_text",
                     rows = ROWS,
-                    cols = COLS
+                    cols = LEG_COLS
                 ),
                 Br(),
                 Button(
                     id = "legs_submit",
                     children = "submit"
                 )
-            ]
+            ],
+            style = {
+                "text-align": "middle"
+            }
         )
         
         variables_control_cell = Td(
@@ -49,14 +57,17 @@ class view():
                 Textarea(
                     id = "variables_text",
                     rows = ROWS,
-                    cols = COLS
+                    cols = VARS_COLS
                 ),
                 Br(),
                 Button(
                     id = "variables_submit",
                     children = "submit"
                 )
-            ]
+            ],
+            style = {
+                "text-align": "right"
+            }
         )
 
         controls_row = Tr(

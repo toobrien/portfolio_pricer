@@ -66,19 +66,26 @@ def set_underlyings_data(_, txt: str) -> List[Table]:
         contract = ul.get_contract()
         option_chains = ul.get_option_chains()
         
+        if len(option_chains) == 0:
+
+            i += 1
+            continue
+
         symbol = contract.localSymbol
         price = ul.get_price()
         expiries = []
         strikes = []
         trading_classes = []
 
+        
+
         for j in range(len(option_chains)):
 
             trading_classes.append(f"{j}:{option_chains[j].get_trading_class()}")
 
         # assume expiries valid for all classes, format and label expiries
-
-        expiries.extend(option_chains[0].get_expiries()[:MAX_EXPIRIES])
+        
+            expiries.extend(option_chains[0].get_expiries()[:MAX_EXPIRIES])
 
         for j in range(len(expiries)):
 
@@ -219,7 +226,7 @@ if __name__ == "__main__":
                 "\n".join(
                     [
                         "TSLA",
-                        #"NG:5"
+                        "NG:3"
                     ]
                 )
             )
