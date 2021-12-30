@@ -40,7 +40,7 @@ def price_leg(leg: leg, variables: dict):
 
             res = max(0, leg.strike - underlying_price)
 
-    return res * leg.quantity
+    return res * leg.quantity * -1 if not leg.long else 1
 
 
 def get_payoffs(legs: List[leg], variables: dict):

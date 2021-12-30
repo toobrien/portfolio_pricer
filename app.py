@@ -185,7 +185,7 @@ def set_variables_and_payoff_graph(
 
     return [ 
         get_payoff_graph(
-            "payoff_chart_view",
+            "payoff_chart",
             legs,
             variables
         )
@@ -228,8 +228,10 @@ if __name__ == "__main__":
                 None,
                 "\n".join(
                     [
-                        "0:4:0:-1 C900",
-                        "0:4:0:+1 C890"
+                        "0:3:0:-1 C1110",
+                        "0:3:0:+1 C1100",
+                        "0:3:0:-1 P1000",
+                        "0:3:0:+1 P990"
                     ]
                 )
             )

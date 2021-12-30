@@ -145,7 +145,9 @@ def parse_legs(legs_text: str) -> dict:
 
         else:
             
-            leg_.quantity= int(idxs[3][1:])
+            leg_.quantity = int(idxs[3][1:])
+            sign = -1 if not leg_.long else 1
+            leg_.quantity *= sign
 
         res.append(leg_)
 

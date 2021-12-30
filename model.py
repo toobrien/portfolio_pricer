@@ -87,6 +87,7 @@ class model():
     def set_legs(self, legs: List[leg]):
 
         self.legs_by_id = {}
+        self.legs_by_index = []
         self.legs_by_underlying = {
             symbol : []
             for symbol in self.underlyings_by_symbol
@@ -195,7 +196,6 @@ class model():
         
         for underlying in self.underlyings_by_index:
 
-            print(f"{underlying.symbol}: {underlying.price}")
             self.variables[underlying.symbol] = underlying.price
 
         for leg in self.legs_by_index:
@@ -232,7 +232,6 @@ class model():
         for variable_def in variables_text.split("\n"):
 
             parts = variable_def.split()
-            print(f"PARTS: {parts}")
             self.variables[parts[0]] = float(parts[1])
 
 
