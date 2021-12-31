@@ -1,5 +1,5 @@
 from dash import Dash
-from dash_core_components import Graph
+from dash_core_components import Graph, Slider
 from dash_html_components import Table, Td, Tr
 from dash.dependencies import Input, Output, State
 from ib.ib import ib
@@ -7,7 +7,7 @@ from json import loads
 from model import model
 from parsers import parse_ul_def, parse_legs
 from payoff import get_payoff_graph
-from typing import List
+from typing import List, Tuple
 from view import view
 
 
@@ -76,8 +76,6 @@ def set_underlyings_data(_, txt: str) -> List[Table]:
         expiries = []
         strikes = []
         trading_classes = []
-
-        
 
         for j in range(len(option_chains)):
 
@@ -158,34 +156,52 @@ def set_underlyings_data(_, txt: str) -> List[Table]:
 @debug(
     app.callback(
         Output("variables_text", "value"),
+        Output("time_slider_view", "children"),
         Input("legs_submit", "n_clicks"),
         State("legs_text", "value"),
         prevent_initial_call = True
     )
 )
-def set_legs(_, legs_text: str) -> str:
+def set_legs(_, legs_text: str) -> Tuple[str, List[Slider]]:
 
     legs = parse_legs(legs_text)
     model_.set_legs(legs)
     model_.initialize_variables()
 
-    return model_.get_variables_text()
+    variables = model_.get_variables()
+
+    time_slider = Slider(
+        id = "time_slider",
+        min = 0,
+        max = variables["time"],
+        step = 1,
+        value = variables["time"],
+        updatemode = "drag"
+    )
+
+    return model_.get_variables_text(), [ time_slider ]
 
 
 @debug(
     app.callback(
         Output("payoff_chart_view", "children"),
         Input("variables_submit", "n_clicks"),
+        Input("rate_slider", "value"),
+        Input("time_slider", "value"),
         State("variables_text", "value"),
         prevent_initial_call = True
     )
 )
 def set_variables_and_payoff_graph(
     _, 
+    rate: float,
+    time: int,
     variables_text: str
 ) -> List[Graph]:
 
     model_.set_variables_from_text(variables_text)
+    model_.set_rate(rate)
+    model_.set_time(time)
 
     legs = model_.get_legs_by_index()
     variables = model_.get_variables()

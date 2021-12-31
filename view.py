@@ -11,7 +11,7 @@ class view():
         LEG_COLS = 20
         VARS_COLS = 40
 
-        # controls
+        # text controls
 
         underlyings_control_cell = Td(
             id = "underlyings_control_cell",
@@ -79,6 +79,62 @@ class view():
             ]
         )
 
+        # sliders
+
+        time_slider_cell = Td(
+            id = "time_slider_cell",
+            children = [
+                "time",
+                Div(
+                    id = "time_slider_view",
+                    children = [
+                        Slider(
+                            id = "time_slider",
+                            min = 0,
+                            max = 252,
+                            step = 1,
+                            value = 0.10,
+                            updatemode = "drag"
+                        )
+                    ]
+                )
+            ]
+        )
+
+        rate_slider_cell = Td(
+            id = "rate_slider_cell",
+            children = [
+                "rate",
+                Div(
+                    id = "rate_slider_view",
+                    children = [
+                        Slider(
+                            id = "rate_slider",
+                            min = 0,
+                            max = 10,
+                            step = 0.01,
+                            value = 0.60,
+                            updatemode = "drag"
+                        )
+                    ]
+                )
+            ]
+        )
+
+        null_slider_cell = Td(
+            id = "null_slider_cell",
+            children = []
+        )
+
+        sliders_row = Tr(
+            id = "sliders_row",
+            children = [
+                time_slider_cell,
+                rate_slider_cell,
+                null_slider_cell
+            ]
+        )
+
         # underlyings_data_cell
 
         underlyings_data_cell = Td(
@@ -119,6 +175,7 @@ class view():
             id = "app_view",
             children = [
                 payoff_row,
+                sliders_row,
                 underlyings_data_row,
                 controls_row ,
                 Div(

@@ -253,3 +253,6 @@ class model():
     def get_legs_by_id(self):       return self.legs_by_id
     def get_legs_by_index(self):    return self.legs_by_index
     def get_variables(self):        return self.variables
+
+    def set_rate(self, rate):       self.variables["rate"] = rate
+    def set_time(self, time):       self.variables["time"] = time
