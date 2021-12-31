@@ -4,6 +4,9 @@ from sys import maxsize
 from typing import List
 
 
+DEFAULT_RATE = 0.60
+
+
 def get_dte(exp: str):
 
         d0 = date.today()
@@ -193,7 +196,7 @@ class model():
 
         self.variables = {
             "time": maxsize,
-            "rate": 0.10
+            "rate": DEFAULT_RATE
         }
         
         for underlying in self.underlyings_by_index:
@@ -221,15 +224,14 @@ class model():
 
             res.append(f"{leg.id}\t{leg.iv:4.4f},{leg.cost:4.4f}")
 
+        res.append(f"rate\t\t{self.variables['rate']}")
+
         return ("\n").join(res)
 
     
     def set_variables_from_text(self, variables_text):
 
-        self.variables = {
-            "time": maxsize,
-            "rate": 0.10
-        }
+        self.variables = { "time": maxsize }
 
         for variable_def in variables_text.split("\n"):
 
@@ -238,15 +240,17 @@ class model():
             if ":" in variable_def:
                 
                 # leg
+
                 vals = parts[1].split(',')
                 self.variables[parts[0]] = {
                     "iv": float(vals[0]),
                     "cost": float(vals[1])
                 }
-                
+            
             else:
                 
-                # underlying
+                # underlying or rate
+
                 self.variables[parts[0]] = float(parts[1])
 
 
@@ -254,5 +258,4 @@ class model():
     def get_legs_by_index(self):    return self.legs_by_index
     def get_variables(self):        return self.variables
 
-    def set_rate(self, rate):       self.variables["rate"] = rate
     def set_time(self, time):       self.variables["time"] = time

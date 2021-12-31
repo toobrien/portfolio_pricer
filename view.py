@@ -1,5 +1,5 @@
-from dash_core_components import Slider, Textarea
-from dash_html_components import Br, Button, Div, Table, Td, Tr
+from dash_core_components import Dropdown, Slider, Textarea
+from dash_html_components import Br, Button, Div, P, Table, Td, Tr
 
 class view():
 
@@ -83,17 +83,23 @@ class view():
 
         time_slider_cell = Td(
             id = "time_slider_cell",
+            colSpan = 2,
             children = [
-                "time",
                 Div(
                     id = "time_slider_view",
                     children = [
+                        P(
+                            id = "time_label",
+                            children = [
+                                f"time: 0"
+                            ]
+                        ),
                         Slider(
                             id = "time_slider",
                             min = 0,
                             max = 252,
                             step = 1,
-                            value = 0.10,
+                            value = 0,
                             updatemode = "drag"
                         )
                     ]
@@ -101,37 +107,35 @@ class view():
             ]
         )
 
-        rate_slider_cell = Td(
-            id = "rate_slider_cell",
+        add_cost_cell = Td(
+            id = "add_cost_cell",
             children = [
-                "rate",
-                Div(
-                    id = "rate_slider_view",
+                P(
+                    id = "add_cost_label",
                     children = [
-                        Slider(
-                            id = "rate_slider",
-                            min = 0,
-                            max = 10,
-                            step = 0.01,
-                            value = 0.60,
-                            updatemode = "drag"
-                        )
+                        "add cost"
                     ]
+                ),
+                Dropdown(
+                    id = "add_cost_dropdown",
+                    options = [
+                        {
+                            "label": "true", "value": True
+                        },
+                        {
+                            "label": "false", "value": False
+                        }
+                    ],
+                    value = False
                 )
             ]
-        )
-
-        null_slider_cell = Td(
-            id = "null_slider_cell",
-            children = []
         )
 
         sliders_row = Tr(
             id = "sliders_row",
             children = [
                 time_slider_cell,
-                rate_slider_cell,
-                null_slider_cell
+                add_cost_cell
             ]
         )
 

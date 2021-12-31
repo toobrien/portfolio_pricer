@@ -16,7 +16,6 @@ def price_leg(leg: leg, variables: dict):
     underlying_price = variables[leg.underlying.symbol]
     vol = variables[leg.id]["iv"]    
     rate = variables["rate"]
-    cost = variables[leg.id]["cost"]
 
     res = 0
 
@@ -40,11 +39,11 @@ def price_leg(leg: leg, variables: dict):
         else:
 
             res = max(0, leg.strike - underlying_price)
+        
+    return res * leg.quantity 
 
-    return res * leg.quantity - cost
 
-
-def get_payoffs(legs: List[leg], variables: dict):
+def get_payoffs(legs: List[leg], variables: dict, add_cost: bool):
 
     front_leg = legs[0]
     nearest_underlying = front_leg.underlying
@@ -63,20 +62,22 @@ def get_payoffs(legs: List[leg], variables: dict):
 
         for leg in legs:
 
-            y_ = y_ + price_leg(leg, variables) #- leg.cost
+            y_ += price_leg(leg, variables) 
+            if add_cost: y_ -= leg.cost
         
         y.append(y_)
-    
+
     return x, y
 
 
 def get_payoff_graph(
     id: str, 
     legs: List[leg], 
-    variables: dict
+    variables: dict,
+    add_cost: bool
 ) -> Graph:
 
-    x, y = get_payoffs(legs, variables)
+    x, y = get_payoffs(legs, variables, add_cost)
 
     fig = go.Figure()
 

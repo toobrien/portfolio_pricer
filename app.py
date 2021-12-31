@@ -1,6 +1,6 @@
 from dash import Dash
 from dash_core_components import Graph, Slider
-from dash_html_components import Table, Td, Tr
+from dash_html_components import Div, P, Table, Td, Tr
 from dash.dependencies import Input, Output, State
 from ib.ib import ib
 from json import loads
@@ -162,31 +162,44 @@ def set_underlyings_data(_, txt: str) -> List[Table]:
         prevent_initial_call = True
     )
 )
-def set_legs(_, legs_text: str) -> Tuple[str, List[Slider]]:
+def set_legs(_, legs_text: str) -> Tuple[str, List[Div]]:
 
     legs = parse_legs(legs_text)
     model_.set_legs(legs)
     model_.initialize_variables()
 
     variables = model_.get_variables()
+    time = variables["time"]
 
-    time_slider = Slider(
-        id = "time_slider",
-        min = 0,
-        max = variables["time"],
-        step = 1,
-        value = variables["time"],
-        updatemode = "drag"
+    time_slider_view = Div(
+        id = "time_slider_view",
+        children = [
+            P(
+                id = "time_label",
+                children = [
+                    f"time ({time})"
+                ]
+            ),
+            Slider(
+                id = "time_slider",
+                min = 0,
+                max = time,
+                step = 1,
+                value = time,
+                updatemode = "drag"
+            )
+        ]
     )
 
-    return model_.get_variables_text(), [ time_slider ]
+    return model_.get_variables_text(), [ time_slider_view ]
 
 
 @debug(
     app.callback(
         Output("payoff_chart_view", "children"),
+        Output("time_label", "children"),
         Input("variables_submit", "n_clicks"),
-        Input("rate_slider", "value"),
+        Input("add_cost_dropdown", "value"),
         Input("time_slider", "value"),
         State("variables_text", "value"),
         prevent_initial_call = True
@@ -194,25 +207,28 @@ def set_legs(_, legs_text: str) -> Tuple[str, List[Slider]]:
 )
 def set_variables_and_payoff_graph(
     _, 
-    rate: float,
+    add_cost: bool,
     time: int,
-    variables_text: str
-) -> List[Graph]:
+    variables_text: str,
+) -> Tuple[List[Graph], List[str]]:
 
     model_.set_variables_from_text(variables_text)
-    model_.set_rate(rate)
     model_.set_time(time)
 
     legs = model_.get_legs_by_index()
     variables = model_.get_variables()
 
-    return [ 
+    payoff_graph = [ 
         get_payoff_graph(
             "payoff_chart",
             legs,
-            variables
+            variables,
+            add_cost
         )
     ]
+    time_label = [ f"time: {variables['time']}" ]
+
+    return payoff_graph, time_label
 
 
 # MAIN
