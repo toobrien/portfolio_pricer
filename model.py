@@ -150,7 +150,7 @@ class model():
                 if option.type == leg_type:
 
                     leg.cost = option.get_cost()
-                    if leg.long: leg.cost *= -1
+                    if not leg.long: leg.cost *= -1
 
                     leg.iv = option.get_iv()
 
