@@ -107,26 +107,26 @@ class view():
             ]
         )
 
-        add_cost_cell = Td(
-            id = "add_cost_cell",
+        mode_cell = Td(
+            id = "mode_cell",
             children = [
                 P(
-                    id = "add_cost_label",
+                    id = "mode_label",
                     children = [
-                        "add cost"
+                        "mode"
                     ]
                 ),
                 Dropdown(
-                    id = "add_cost_dropdown",
+                    id = "mode_dropdown",
                     options = [
                         {
-                            "label": "true", "value": True
+                            "label": "pnl", "value": "pnl"
                         },
                         {
-                            "label": "false", "value": False
+                            "label": "value", "value": "value"
                         }
                     ],
-                    value = False
+                    value = "value"
                 )
             ]
         )
@@ -135,7 +135,7 @@ class view():
             id = "sliders_row",
             children = [
                 time_slider_cell,
-                add_cost_cell
+                mode_cell
             ]
         )
 

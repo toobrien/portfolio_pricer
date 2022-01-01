@@ -199,7 +199,7 @@ def set_legs(_, legs_text: str) -> Tuple[str, List[Div]]:
         Output("payoff_chart_view", "children"),
         Output("time_label", "children"),
         Input("variables_submit", "n_clicks"),
-        Input("add_cost_dropdown", "value"),
+        Input("mode_dropdown", "value"),
         Input("time_slider", "value"),
         State("variables_text", "value"),
         prevent_initial_call = True
@@ -207,7 +207,7 @@ def set_legs(_, legs_text: str) -> Tuple[str, List[Div]]:
 )
 def set_variables_and_payoff_graph(
     _, 
-    add_cost: bool,
+    mode: str,
     time: int,
     variables_text: str,
 ) -> Tuple[List[Graph], List[str]]:
@@ -223,7 +223,7 @@ def set_variables_and_payoff_graph(
             "payoff_chart",
             legs,
             variables,
-            add_cost
+            mode
         )
     ]
     time_label = [ f"time: {variables['time']}" ]

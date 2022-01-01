@@ -43,7 +43,7 @@ def price_leg(leg: leg, variables: dict):
     return res * leg.quantity 
 
 
-def get_payoffs(legs: List[leg], variables: dict, add_cost: bool):
+def get_payoffs(legs: List[leg], variables: dict, mode: str):
 
     front_leg = legs[0]
     nearest_underlying = front_leg.underlying
@@ -63,7 +63,7 @@ def get_payoffs(legs: List[leg], variables: dict, add_cost: bool):
         for leg in legs:
 
             y_ += price_leg(leg, variables) 
-            if add_cost: y_ -= leg.cost
+            if mode == "pnl": y_ -= leg.cost
         
         y.append(y_)
 
@@ -74,10 +74,10 @@ def get_payoff_graph(
     id: str, 
     legs: List[leg], 
     variables: dict,
-    add_cost: bool
+    mode: str
 ) -> Graph:
 
-    x, y = get_payoffs(legs, variables, add_cost)
+    x, y = get_payoffs(legs, variables, mode)
 
     fig = go.Figure()
 
