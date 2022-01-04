@@ -4,7 +4,7 @@ from sys import maxsize
 from typing import List
 
 
-DEFAULT_RATE = 0.60
+DEFAULT_RATE = 0.0060
 
 
 def get_dte(exp: str):
