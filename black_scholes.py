@@ -1,7 +1,7 @@
 from math import exp, log, sqrt
 from statistics import NormalDist
 
-cdf = NormalDist().cdf
+N = NormalDist().cdf
 
 def price(
     call:   bool,
@@ -21,8 +21,8 @@ def price(
 
     if call:
         
-        return cdf(d1_) * und - cdf(d2_) * disc
+        return N(d1_) * und - N(d2_) * disc
 
     else:
 
-        return cdf(-d2_) * disc - cdf(-d1_) * und
+        return N(-d2_) * disc - N(-d1_) * und

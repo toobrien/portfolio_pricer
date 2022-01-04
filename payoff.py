@@ -5,10 +5,10 @@ from numpy import arange
 import plotly.graph_objects as go
 from typing import List
 
-DPY = 252
+DPY = 365
 PAYOFF_MIN = 0.5
-PAYOFF_MAX = 1.5
-STEPS = 1000
+PAYOFF_MAX = 2.0
+STEPS = 2000
 
 def price_leg(leg: leg, variables: dict):
 
